@@ -345,11 +345,6 @@ export const spec = {
       return false;
     }
 
-    if (!includesSize(bid.sizes, bid.params.size)) {
-      utils.logError('ix bidder params: bid size is not included in ad unit sizes.');
-      return false;
-    }
-
     if (bid.hasOwnProperty('mediaType') && !(utils.contains(SUPPORTED_AD_TYPES, bid.mediaType))) {
       return false;
     }
@@ -392,7 +387,7 @@ export const spec = {
     for (let i = 0; i < validBidRequests.length; i++) {
       validBidRequest = validBidRequests[i];
 
-      if (validBidRequest.mediaType === VIDEO || utils.deepAccess(validBidRequest, 'mediaTypes.video')) {
+      if (validBidRequest.params.hasOwnProperty('video') && (validBidRequest.mediaType === VIDEO || utils.deepAccess(validBidRequest, 'mediaTypes.video'))) {
         if (validBidRequest.mediaType === VIDEO || includesSize(validBidRequest.mediaTypes.video.playerSize, validBidRequest.params.size)) {
           videoImps.push(bidToVideoImp(validBidRequest));
         } else {
@@ -400,8 +395,8 @@ export const spec = {
         }
       }
 
-      if (validBidRequest.mediaType === BANNER || utils.deepAccess(validBidRequest, 'mediaTypes.banner') ||
-          (!validBidRequest.mediaType && !validBidRequest.mediaTypes)) {
+      if (!validBidRequest.params.hasOwnProperty('video') && (validBidRequest.mediaType === BANNER || utils.deepAccess(validBidRequest, 'mediaTypes.banner') ||
+          (!validBidRequest.mediaType && !validBidRequest.mediaTypes))) {
         bannerImps.push(bidToBannerImp(validBidRequest));
       }
     }
